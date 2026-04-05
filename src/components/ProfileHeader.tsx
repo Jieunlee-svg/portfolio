@@ -1,22 +1,39 @@
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import { Camera, Pencil, BadgeCheck, Plus, Send } from "lucide-react";
-import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { ImageWithFallback } from "@/components/ImageWithFallback";
+import type { ProfileData } from "@/data/profile";
 
-const coverImage = "https://images.unsplash.com/photo-1707788334439-30811bee6d9a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsaW5rZWRpbiUyMGJhY2tncm91bmQlMjBiYW5uZXJ8ZW58MXx8fHwxNzc1MzczOTk3fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral";
-const profileImage = "https://images.unsplash.com/photo-1567850179641-1d2f8bec55cd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBrb3JlYW4lMjBtYW4lMjBoZWFkc2hvdHxlbnwxfHx8fDE3NzUzNzM5OTd8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral";
-const companyLogo = "https://images.unsplash.com/photo-1746047420047-03fc7a9b9226?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0ZWNoJTIwc3RhcnR1cCUyMGNvbXBhbnklMjBsb2dvfGVufDF8fHx8MTc3NTM3Mzk5N3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral";
-const universityLogo = "https://images.unsplash.com/photo-1596067825960-c996c51d7463?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx1bml2ZXJzaXR5JTIwbG9nbyUyMHNoaWVsZHxlbnwxfHx8fDE3NzUzNzM5OTd8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral";
+interface ProfileHeaderProps {
+  isAdmin?: boolean;
+  profile: ProfileData | null;
+  loading?: boolean;
+}
 
-export function ProfileHeader({ isAdmin = false }: { isAdmin?: boolean }) {
+export function ProfileHeader({ isAdmin = false, profile, loading = false }: ProfileHeaderProps) {
+  if (loading) {
+    return (
+      <div className="w-full bg-white rounded-[24px] overflow-hidden border border-gray-100 pb-6 shadow-[0_4px_12px_rgba(0,0,0,0.03)] animate-pulse">
+        <div className="h-[200px] bg-[#f5f6f8]" />
+        <div className="px-8 pt-4 space-y-3">
+          <div className="w-[152px] h-[152px] rounded-full bg-[#f5f6f8] -mt-[112px]" />
+          <div className="h-6 bg-[#f5f6f8] rounded w-1/3" />
+          <div className="h-4 bg-[#f5f6f8] rounded w-1/2" />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full bg-white rounded-[24px] overflow-hidden border border-gray-100 pb-6 relative shadow-[0_4px_12px_rgba(0,0,0,0.03)]">
       {/* Cover Photo */}
       <div className="relative h-[200px] w-full bg-[#e6e9ef]">
-        <ImageWithFallback
-          src={coverImage}
-          alt="Cover"
-          className="w-full h-full object-cover"
-        />
+        {profile?.coverImage && (
+          <ImageWithFallback
+            src={profile.coverImage}
+            alt="Cover"
+            className="w-full h-full object-cover"
+          />
+        )}
         {isAdmin && (
           <button className="absolute top-4 right-4 p-2.5 bg-white/90 backdrop-blur-md rounded-full shadow-sm hover:bg-white transition-all hover:scale-105">
             <Camera className="w-5 h-5 text-[#323338]" />
@@ -24,17 +41,18 @@ export function ProfileHeader({ isAdmin = false }: { isAdmin?: boolean }) {
         )}
       </div>
 
-      {/* Main Content Area */}
       <div className="px-8 relative">
         <div className="flex justify-between items-start">
           {/* Avatar */}
           <div className="relative -mt-[112px]">
-            <div className="w-[152px] h-[152px] rounded-full border-[5px] border-white object-cover bg-white shadow-md overflow-hidden">
-              <ImageWithFallback
-                src={profileImage}
-                alt="Profile"
-                className="w-full h-full object-cover"
-              />
+            <div className="w-[152px] h-[152px] rounded-full border-[5px] border-white bg-[#f5f6f8] shadow-md overflow-hidden">
+              {profile?.profileImage && (
+                <ImageWithFallback
+                  src={profile.profileImage}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              )}
             </div>
             {isAdmin && (
               <button className="absolute bottom-2 right-2 p-2 bg-white rounded-full border border-gray-200 hover:bg-[#f5f6f8] transition-all shadow-sm z-10 hover:scale-105 text-[#323338]">
@@ -42,7 +60,6 @@ export function ProfileHeader({ isAdmin = false }: { isAdmin?: boolean }) {
               </button>
             )}
           </div>
-          {/* Edit Button */}
           {isAdmin && (
             <button className="mt-4 p-2.5 rounded-full bg-[#f5f6f8] hover:bg-[#e6e9ef] transition-colors text-[#676879] hover:text-[#323338]">
               <Pencil className="w-5 h-5" />
@@ -50,37 +67,60 @@ export function ProfileHeader({ isAdmin = false }: { isAdmin?: boolean }) {
           )}
         </div>
 
-        {/* Profile Info & Affiliations */}
         <div className="flex flex-col md:flex-row md:justify-between gap-4 mt-2">
-          {/* Left Side: Personal Info */}
+          {/* Left: Personal Info */}
           <div className="max-w-2xl">
             <div className="flex items-center gap-1.5">
-              <h1 className="text-[28px] font-semibold text-[#323338] tracking-tight leading-none">김민수 (Minsoo Kim)</h1>
+              <h1 className="text-[28px] font-semibold text-[#323338] tracking-tight leading-none">
+                {profile?.name ?? "—"}
+              </h1>
               <BadgeCheck className="w-6 h-6 text-[#00c875] mt-0.5" aria-label="인증됨" />
             </div>
             <p className="text-[16px] font-medium text-[#676879] mt-1.5 leading-snug">
-              Senior Product Designer | UX/UI Expert at Tech Corp
+              {profile?.role ?? ""}
             </p>
             <div className="flex items-center gap-2 mt-2 text-[13px] text-[#676879] font-medium">
-              <span>서울, 대한민국</span>
-              <span className="w-1 h-1 rounded-full bg-[#d0d4e4]"></span>
+              {profile?.location && <span>{profile.location}</span>}
+              <span className="w-1 h-1 rounded-full bg-[#d0d4e4]" />
               <a href="#" className="text-[#0073ea] hover:underline font-medium">연락처 정보</a>
-              <span className="w-1 h-1 rounded-full bg-[#d0d4e4]"></span>
+              <span className="w-1 h-1 rounded-full bg-[#d0d4e4]" />
               <a href="#" className="text-[#0073ea] hover:underline font-medium">500+ 1촌</a>
             </div>
           </div>
 
-          {/* Right Side: Company & Education */}
-          <div className="flex flex-col gap-2 min-w-[220px]">
-            <a href="#" className="flex items-center gap-2.5 hover:bg-[#f5f6f8] p-1 -ml-1 rounded-lg transition-colors group">
-              <ImageWithFallback src={companyLogo} alt="Company" className="w-8 h-8 object-cover rounded-md shadow-sm border border-gray-100" />
-              <span className="text-[13px] font-medium text-[#323338] group-hover:text-[#0073ea]">Tech Corp</span>
-            </a>
-            <a href="#" className="flex items-center gap-2.5 hover:bg-[#f5f6f8] p-1 -ml-1 rounded-lg transition-colors group">
-              <ImageWithFallback src={universityLogo} alt="University" className="w-8 h-8 object-cover rounded-md shadow-sm border border-gray-100" />
-              <span className="text-[13px] font-medium text-[#323338] group-hover:text-[#0073ea]">한국대학교 (Korea University)</span>
-            </a>
-          </div>
+          {/* Right: Company & Education */}
+          {(profile?.company || profile?.university) && (
+            <div className="flex flex-col gap-2 min-w-[220px]">
+              {profile.company && (
+                <a href="#" className="flex items-center gap-2.5 hover:bg-[#f5f6f8] p-1 -ml-1 rounded-lg transition-colors group">
+                  {profile.company.logoUrl && (
+                    <ImageWithFallback
+                      src={profile.company.logoUrl}
+                      alt="Company"
+                      className="w-8 h-8 object-cover rounded-md shadow-sm border border-gray-100"
+                    />
+                  )}
+                  <span className="text-[13px] font-medium text-[#323338] group-hover:text-[#0073ea]">
+                    {profile.company.name}
+                  </span>
+                </a>
+              )}
+              {profile.university && (
+                <a href="#" className="flex items-center gap-2.5 hover:bg-[#f5f6f8] p-1 -ml-1 rounded-lg transition-colors group">
+                  {profile.university.logoUrl && (
+                    <ImageWithFallback
+                      src={profile.university.logoUrl}
+                      alt="University"
+                      className="w-8 h-8 object-cover rounded-md shadow-sm border border-gray-100"
+                    />
+                  )}
+                  <span className="text-[13px] font-medium text-[#323338] group-hover:text-[#0073ea]">
+                    {profile.university.name}
+                  </span>
+                </a>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Action Buttons */}
