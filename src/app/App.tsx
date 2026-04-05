@@ -4,7 +4,7 @@ import { NotionCard } from "./components/NotionCard";
 import { ProjectDetailModal, ProjectData } from "./components/ProjectDetailModal";
 import { ChevronDown, Plus } from "lucide-react";
 import { Footer } from "./components/Footer";
-import cardImage from "figma:asset/73daeab06616082f4ae518ac60071da2ca1604b9.png";
+const cardImage = "https://images.unsplash.com/photo-1497366754035-f200968a6e72?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1080";
 
 export default function App() {
   const [activeTag, setActiveTag] = useState("전체");
