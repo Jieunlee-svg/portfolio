@@ -146,10 +146,12 @@ export function ProfileHeader({ isAdmin = false, profile, loading = false }: Pro
                   1촌 맺기
                 </Button>
               </a>
-              <Button variant="outline" className="border-[#d0d4e4] text-[#323338] hover:bg-[#f5f6f8] hover:border-[#c5c9d6] rounded-xl px-5 py-2 h-auto text-[14px] font-medium transition-all flex items-center gap-1.5">
-                <Send className="w-[16px] h-[16px]" />
-                메시지 보내기
-              </Button>
+              <a href="mailto:eunsa3220@naver.com">
+                <Button variant="outline" className="border-[#d0d4e4] text-[#323338] hover:bg-[#f5f6f8] hover:border-[#c5c9d6] rounded-xl px-5 py-2 h-auto text-[14px] font-medium transition-all flex items-center gap-1.5">
+                  <Send className="w-[16px] h-[16px]" />
+                  메일 보내기
+                </Button>
+              </a>
             </>
           )}
           <Button variant="outline" className="border-[#d0d4e4] text-[#676879] hover:bg-[#f5f6f8] hover:text-[#323338] hover:border-[#c5c9d6] rounded-xl px-5 py-2 h-auto text-[14px] font-medium transition-all">
