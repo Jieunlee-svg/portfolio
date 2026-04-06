@@ -136,10 +136,16 @@ export function ProfileHeader({ isAdmin = false, profile, loading = false }: Pro
             </>
           ) : (
             <>
-              <Button className="bg-[#0073ea] hover:bg-[#0060c2] text-white rounded-xl px-5 py-2 h-auto text-[14px] font-medium transition-all shadow-[0_4px_12px_rgba(0,115,234,0.3)] hover:-translate-y-0.5 flex items-center gap-1.5">
-                <Plus className="w-[16px] h-[16px]" />
-                1촌 맺기
-              </Button>
+              <a
+                href="https://www.linkedin.com/in/eunsa"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button className="bg-[#0073ea] hover:bg-[#0060c2] text-white rounded-xl px-5 py-2 h-auto text-[14px] font-medium transition-all shadow-[0_4px_12px_rgba(0,115,234,0.3)] hover:-translate-y-0.5 flex items-center gap-1.5">
+                  <Plus className="w-[16px] h-[16px]" />
+                  1촌 맺기
+                </Button>
+              </a>
               <Button variant="outline" className="border-[#d0d4e4] text-[#323338] hover:bg-[#f5f6f8] hover:border-[#c5c9d6] rounded-xl px-5 py-2 h-auto text-[14px] font-medium transition-all flex items-center gap-1.5">
                 <Send className="w-[16px] h-[16px]" />
                 메시지 보내기
