@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Activity, ShieldAlert, User } from "lucide-react";
+import { ShieldAlert, User } from "lucide-react";
 import { LoginModal } from "@/components/LoginModal";
 
 interface FooterProps {
@@ -17,14 +17,8 @@ export function Footer({ isAdmin, onLogin, onLogout }: FooterProps) {
         <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-6">
             <div className="flex flex-col items-center sm:items-start gap-2">
-              <div className="flex items-center gap-2">
-                <Activity className="w-7 h-7 text-[#00c875] stroke-[3]" />
-                <span className="text-[20px] font-black text-[#323338] tracking-tight font-sans">
-                  DAEWOONG
-                </span>
-              </div>
-              <p className="text-[13px] font-medium text-[#676879] font-sans mt-1">
-                Copyright © 2026 Daewoong, Inc. All rights reserved.
+              <p className="text-[13px] font-medium text-[#676879] font-sans">
+                Copyright © 2026 Lee ji eun All rights reserved.
               </p>
             </div>
 
