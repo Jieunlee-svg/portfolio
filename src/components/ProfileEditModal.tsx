@@ -21,6 +21,7 @@ export function ProfileEditModal({ isOpen, profile, initialTab = "info", onClose
     companies: [],
     universityName: "",
     universityLogoUrl: "",
+    universityUrl: "",
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -36,6 +37,7 @@ export function ProfileEditModal({ isOpen, profile, initialTab = "info", onClose
         companies: profile.companies ?? [],
         universityName: profile.university?.name ?? "",
         universityLogoUrl: profile.university?.logoUrl ?? "",
+        universityUrl: profile.university?.url ?? "",
       });
       setTab(initialTab);
       setError(null);
@@ -174,6 +176,16 @@ export function ProfileEditModal({ isOpen, profile, initialTab = "info", onClose
                           className="w-full px-3 py-2 rounded-lg border border-[#d0d4e4] bg-white text-[13px] text-[#323338] placeholder-[#a1a1b5] focus:outline-none focus:border-[#0073ea] transition-all"
                         />
                       </div>
+                      <div>
+                        <label className={labelClass}>링크 URL</label>
+                        <input
+                          type="text"
+                          value={company.url}
+                          onChange={(e) => updateCompany(i, "url", e.target.value)}
+                          placeholder="https://..."
+                          className="w-full px-3 py-2 rounded-lg border border-[#d0d4e4] bg-white text-[13px] text-[#323338] placeholder-[#a1a1b5] focus:outline-none focus:border-[#0073ea] transition-all"
+                        />
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -190,6 +202,10 @@ export function ProfileEditModal({ isOpen, profile, initialTab = "info", onClose
                   <div>
                     <label className={labelClass}>학교 로고 URL</label>
                     <input type="text" value={form.universityLogoUrl} onChange={(e) => handleField("universityLogoUrl", e.target.value)} placeholder="https://..." className={inputClass} />
+                  </div>
+                  <div>
+                    <label className={labelClass}>링크 URL</label>
+                    <input type="text" value={form.universityUrl} onChange={(e) => handleField("universityUrl", e.target.value)} placeholder="https://..." className={inputClass} />
                   </div>
                 </div>
               </div>

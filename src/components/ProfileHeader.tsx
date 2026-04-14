@@ -95,7 +95,13 @@ export function ProfileHeader({ isAdmin = false, profile, loading = false, onEdi
           {((profile?.companies && profile.companies.length > 0) || profile?.university) && (
             <div className="flex flex-col gap-2 min-w-[220px]">
               {profile.companies?.map((company, i) => (
-                <a key={i} href="#" className="flex items-center gap-2.5 hover:bg-[#f5f6f8] p-1 -ml-1 rounded-lg transition-colors group">
+                <a
+                  key={i}
+                  href={company.url || undefined}
+                  target={company.url ? "_blank" : undefined}
+                  rel={company.url ? "noopener noreferrer" : undefined}
+                  className={`flex items-center gap-2.5 hover:bg-[#f5f6f8] p-1 -ml-1 rounded-lg transition-colors group ${!company.url ? "cursor-default" : ""}`}
+                >
                   {company.logoUrl && (
                     <ImageWithFallback
                       src={company.logoUrl}
@@ -109,7 +115,12 @@ export function ProfileHeader({ isAdmin = false, profile, loading = false, onEdi
                 </a>
               ))}
               {profile.university && (
-                <a href="#" className="flex items-center gap-2.5 hover:bg-[#f5f6f8] p-1 -ml-1 rounded-lg transition-colors group">
+                <a
+                  href={profile.university.url || undefined}
+                  target={profile.university.url ? "_blank" : undefined}
+                  rel={profile.university.url ? "noopener noreferrer" : undefined}
+                  className={`flex items-center gap-2.5 hover:bg-[#f5f6f8] p-1 -ml-1 rounded-lg transition-colors group ${!profile.university.url ? "cursor-default" : ""}`}
+                >
                   {profile.university.logoUrl && (
                     <ImageWithFallback
                       src={profile.university.logoUrl}
