@@ -168,7 +168,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#f5f6f8] font-sans selection:bg-[#0073ea] selection:text-white">
-      <div className="max-w-3xl mx-auto p-4 md:p-6 lg:p-8 space-y-4">
+      <div className="max-w-6xl mx-auto p-4 md:p-6 lg:p-8 space-y-4">
 
         {/* 프로필 */}
         <ProfileHeader
