@@ -11,6 +11,7 @@ export interface ProfileData {
   name: string;
   role: string;
   location: string;
+  about: string | null;
   coverImage: string | null;
   profileImage: string | null;
   companies: CompanyEntry[];
@@ -24,6 +25,7 @@ export interface ProfileUpdateData {
   coverImage: string;
   profileImage: string;
   companies: CompanyEntry[];
+  about: string;
   universityName: string;
   universityLogoUrl: string;
   universityUrl: string;
@@ -43,6 +45,7 @@ export async function fetchProfile(): Promise<ProfileData | null> {
     name: data.name,
     role: data.role,
     location: data.location,
+    about: data.about ?? null,
     coverImage: data.cover_image,
     profileImage: data.profile_image,
     companies: Array.isArray(data.companies) ? data.companies : [],
@@ -59,6 +62,7 @@ export async function updateProfile(id: string, data: ProfileUpdateData): Promis
       name: data.name,
       role: data.role,
       location: data.location,
+      about: data.about || null,
       cover_image: data.coverImage || null,
       profile_image: data.profileImage || null,
       companies: data.companies,

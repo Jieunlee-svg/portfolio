@@ -11,11 +11,12 @@ interface ProfileEditModalProps {
 }
 
 export function ProfileEditModal({ isOpen, profile, initialTab = "info", onClose, onSave }: ProfileEditModalProps) {
-  const [tab, setTab] = useState<"image" | "info">(initialTab);
+  const [tab, setTab] = useState<"image" | "info" | "about">(initialTab);
   const [form, setForm] = useState<ProfileUpdateData>({
     name: "",
     role: "",
     location: "",
+    about: "",
     coverImage: "",
     profileImage: "",
     companies: [],
@@ -34,6 +35,7 @@ export function ProfileEditModal({ isOpen, profile, initialTab = "info", onClose
         location: profile.location ?? "",
         coverImage: profile.coverImage ?? "",
         profileImage: profile.profileImage ?? "",
+        about: profile.about ?? "",
         companies: profile.companies ?? [],
         universityName: profile.university?.name ?? "",
         universityLogoUrl: profile.university?.logoUrl ?? "",
@@ -47,6 +49,7 @@ export function ProfileEditModal({ isOpen, profile, initialTab = "info", onClose
   if (!isOpen) return null;
 
   const handleField = (field: keyof Omit<ProfileUpdateData, "companies">, value: string) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -101,7 +104,7 @@ export function ProfileEditModal({ isOpen, profile, initialTab = "info", onClose
 
         {/* Tabs */}
         <div className="flex px-8 border-b border-gray-100 flex-shrink-0">
-          {(["info", "image"] as const).map((t) => (
+          {(["info", "about", "image"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
@@ -111,7 +114,7 @@ export function ProfileEditModal({ isOpen, profile, initialTab = "info", onClose
                   : "border-transparent text-[#676879] hover:text-[#323338]"
               }`}
             >
-              {t === "info" ? "기본 정보" : "이미지"}
+              {t === "info" ? "기본 정보" : t === "about" ? "소개" : "이미지"}
             </button>
           ))}
         </div>
@@ -210,6 +213,19 @@ export function ProfileEditModal({ isOpen, profile, initialTab = "info", onClose
                 </div>
               </div>
             </>
+          )}
+
+          {tab === "about" && (
+            <div>
+              <label className={labelClass}>소개</label>
+              <textarea
+                value={form.about}
+                onChange={(e) => handleField("about", e.target.value)}
+                placeholder="자신을 소개하는 글을 작성해주세요."
+                rows={8}
+                className="w-full px-4 py-2.5 rounded-xl border border-[#d0d4e4] text-[14px] text-[#323338] placeholder-[#a1a1b5] focus:outline-none focus:border-[#0073ea] focus:ring-2 focus:ring-[#0073ea]/10 transition-all resize-none"
+              />
+            </div>
           )}
 
           {tab === "image" && (
