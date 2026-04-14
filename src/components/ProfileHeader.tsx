@@ -92,22 +92,22 @@ export function ProfileHeader({ isAdmin = false, profile, loading = false, onEdi
           </div>
 
           {/* Right: Company & Education */}
-          {(profile?.company || profile?.university) && (
+          {((profile?.companies && profile.companies.length > 0) || profile?.university) && (
             <div className="flex flex-col gap-2 min-w-[220px]">
-              {profile.company && (
-                <a href="#" className="flex items-center gap-2.5 hover:bg-[#f5f6f8] p-1 -ml-1 rounded-lg transition-colors group">
-                  {profile.company.logoUrl && (
+              {profile.companies?.map((company, i) => (
+                <a key={i} href="#" className="flex items-center gap-2.5 hover:bg-[#f5f6f8] p-1 -ml-1 rounded-lg transition-colors group">
+                  {company.logoUrl && (
                     <ImageWithFallback
-                      src={profile.company.logoUrl}
-                      alt="Company"
+                      src={company.logoUrl}
+                      alt={company.name}
                       className="w-8 h-8 object-cover rounded-md shadow-sm border border-gray-100"
                     />
                   )}
                   <span className="text-[13px] font-medium text-[#323338] group-hover:text-[#0073ea]">
-                    {profile.company.name}
+                    {company.name}
                   </span>
                 </a>
-              )}
+              ))}
               {profile.university && (
                 <a href="#" className="flex items-center gap-2.5 hover:bg-[#f5f6f8] p-1 -ml-1 rounded-lg transition-colors group">
                   {profile.university.logoUrl && (

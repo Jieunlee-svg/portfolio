@@ -1,5 +1,10 @@
 import { supabase } from "@/lib/supabase";
 
+export interface CompanyEntry {
+  name: string;
+  logoUrl: string;
+}
+
 export interface ProfileData {
   id: string;
   name: string;
@@ -7,7 +12,7 @@ export interface ProfileData {
   location: string;
   coverImage: string | null;
   profileImage: string | null;
-  company: { name: string; logoUrl: string | null } | null;
+  companies: CompanyEntry[];
   university: { name: string; logoUrl: string | null } | null;
 }
 
@@ -17,8 +22,7 @@ export interface ProfileUpdateData {
   location: string;
   coverImage: string;
   profileImage: string;
-  companyName: string;
-  companyLogoUrl: string;
+  companies: CompanyEntry[];
   universityName: string;
   universityLogoUrl: string;
 }
@@ -39,9 +43,7 @@ export async function fetchProfile(): Promise<ProfileData | null> {
     location: data.location,
     coverImage: data.cover_image,
     profileImage: data.profile_image,
-    company: data.company_name
-      ? { name: data.company_name, logoUrl: data.company_logo_url }
-      : null,
+    companies: Array.isArray(data.companies) ? data.companies : [],
     university: data.university_name
       ? { name: data.university_name, logoUrl: data.university_logo_url }
       : null,
@@ -57,8 +59,7 @@ export async function updateProfile(id: string, data: ProfileUpdateData): Promis
       location: data.location,
       cover_image: data.coverImage || null,
       profile_image: data.profileImage || null,
-      company_name: data.companyName || null,
-      company_logo_url: data.companyLogoUrl || null,
+      companies: data.companies,
       university_name: data.universityName || null,
       university_logo_url: data.universityLogoUrl || null,
     })

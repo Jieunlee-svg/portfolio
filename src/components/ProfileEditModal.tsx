@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { X } from "lucide-react";
-import type { ProfileData, ProfileUpdateData } from "@/data/profile";
+import { X, Plus, Trash2 } from "lucide-react";
+import type { ProfileData, ProfileUpdateData, CompanyEntry } from "@/data/profile";
 
 interface ProfileEditModalProps {
   isOpen: boolean;
@@ -18,8 +18,7 @@ export function ProfileEditModal({ isOpen, profile, initialTab = "info", onClose
     location: "",
     coverImage: "",
     profileImage: "",
-    companyName: "",
-    companyLogoUrl: "",
+    companies: [],
     universityName: "",
     universityLogoUrl: "",
   });
@@ -34,8 +33,7 @@ export function ProfileEditModal({ isOpen, profile, initialTab = "info", onClose
         location: profile.location ?? "",
         coverImage: profile.coverImage ?? "",
         profileImage: profile.profileImage ?? "",
-        companyName: profile.company?.name ?? "",
-        companyLogoUrl: profile.company?.logoUrl ?? "",
+        companies: profile.companies ?? [],
         universityName: profile.university?.name ?? "",
         universityLogoUrl: profile.university?.logoUrl ?? "",
       });
@@ -46,16 +44,32 @@ export function ProfileEditModal({ isOpen, profile, initialTab = "info", onClose
 
   if (!isOpen) return null;
 
-  const handleField = (field: keyof ProfileUpdateData, value: string) => {
+  const handleField = (field: keyof Omit<ProfileUpdateData, "companies">, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
+
+  const addCompany = () =>
+    setForm((prev) => ({ ...prev, companies: [...prev.companies, { name: "", logoUrl: "" }] }));
+
+  const updateCompany = (index: number, field: keyof CompanyEntry, value: string) =>
+    setForm((prev) => {
+      const companies = [...prev.companies];
+      companies[index] = { ...companies[index], [field]: value };
+      return { ...prev, companies };
+    });
+
+  const removeCompany = (index: number) =>
+    setForm((prev) => ({ ...prev, companies: prev.companies.filter((_, i) => i !== index) }));
 
   const handleSave = async () => {
     if (!form.name.trim()) { setError("이름을 입력해주세요."); return; }
     setSaving(true);
     setError(null);
     try {
-      await onSave(form);
+      await onSave({
+        ...form,
+        companies: form.companies.filter((c) => c.name.trim()),
+      });
       onClose();
     } catch (e) {
       setError(e instanceof Error ? e.message : "저장 중 오류가 발생했습니다.");
@@ -117,20 +131,55 @@ export function ProfileEditModal({ isOpen, profile, initialTab = "info", onClose
                 <input type="text" value={form.location} onChange={(e) => handleField("location", e.target.value)} placeholder="예) 서울, 대한민국" className={inputClass} />
               </div>
 
+              {/* 회사 */}
               <div className="pt-2 border-t border-gray-100">
-                <p className="text-[13px] font-semibold text-[#a1a1b5] uppercase tracking-wider mb-4">회사</p>
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-[13px] font-semibold text-[#a1a1b5] uppercase tracking-wider">회사</p>
+                  <button
+                    onClick={addCompany}
+                    className="flex items-center gap-1 text-[13px] font-medium text-[#0073ea] hover:text-[#0060c0] transition-colors"
+                  >
+                    <Plus className="w-3.5 h-3.5" /> 추가
+                  </button>
+                </div>
+                {form.companies.length === 0 && (
+                  <p className="text-[13px] text-[#a1a1b5]">추가 버튼을 눌러 회사를 등록하세요.</p>
+                )}
                 <div className="space-y-3">
-                  <div>
-                    <label className={labelClass}>회사명</label>
-                    <input type="text" value={form.companyName} onChange={(e) => handleField("companyName", e.target.value)} placeholder="예) Toss, 카카오" className={inputClass} />
-                  </div>
-                  <div>
-                    <label className={labelClass}>회사 로고 URL</label>
-                    <input type="text" value={form.companyLogoUrl} onChange={(e) => handleField("companyLogoUrl", e.target.value)} placeholder="https://..." className={inputClass} />
-                  </div>
+                  {form.companies.map((company, i) => (
+                    <div key={i} className="relative bg-[#f5f6f8] rounded-xl p-4 space-y-2">
+                      <button
+                        onClick={() => removeCompany(i)}
+                        className="absolute top-3 right-3 w-7 h-7 flex items-center justify-center rounded-lg text-[#a1a1b5] hover:text-red-400 hover:bg-red-50 transition-colors"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                      <div>
+                        <label className={labelClass}>회사명</label>
+                        <input
+                          type="text"
+                          value={company.name}
+                          onChange={(e) => updateCompany(i, "name", e.target.value)}
+                          placeholder="예) Toss, 카카오"
+                          className="w-full px-3 py-2 rounded-lg border border-[#d0d4e4] bg-white text-[13px] text-[#323338] placeholder-[#a1a1b5] focus:outline-none focus:border-[#0073ea] transition-all"
+                        />
+                      </div>
+                      <div>
+                        <label className={labelClass}>회사 로고 URL</label>
+                        <input
+                          type="text"
+                          value={company.logoUrl}
+                          onChange={(e) => updateCompany(i, "logoUrl", e.target.value)}
+                          placeholder="https://..."
+                          className="w-full px-3 py-2 rounded-lg border border-[#d0d4e4] bg-white text-[13px] text-[#323338] placeholder-[#a1a1b5] focus:outline-none focus:border-[#0073ea] transition-all"
+                        />
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 
+              {/* 학교 */}
               <div className="pt-2 border-t border-gray-100">
                 <p className="text-[13px] font-semibold text-[#a1a1b5] uppercase tracking-wider mb-4">학교</p>
                 <div className="space-y-3">
