@@ -1,6 +1,7 @@
-import { CalendarRange, ArrowUpRight, Image as ImageIcon, Pencil, Trash2 } from "lucide-react";
+import { CalendarRange, ArrowUpRight, Image as ImageIcon, Pencil, Trash2, Play } from "lucide-react";
 import { ImageWithFallback } from "@/components/ImageWithFallback";
 import { getTagColor } from "@/constants/colors";
+import { getMediaType, getYoutubeThumbnail } from "@/lib/media";
 
 interface NotionCardProps {
   title: string;
@@ -38,15 +39,36 @@ export function NotionCard({ title, description, imageUrl, tags, period, isAdmin
           </button>
         </div>
       )}
-      {/* Image */}
+      {/* Media */}
       {imageUrl ? (
         <div className="aspect-[4/3] w-full overflow-hidden bg-gray-50 relative">
+          {getMediaType(imageUrl) === "youtube" ? (
+            <>
+              <img
+                src={getYoutubeThumbnail(imageUrl)}
+                alt={title}
+                className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500 ease-out"
+              />
+              <div className="absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-black/20 transition-colors">
+                <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center shadow">
+                  <Play className="w-5 h-5 text-[#323338] ml-0.5" fill="currentColor" />
+                </div>
+              </div>
+            </>
+          ) : getMediaType(imageUrl) === "video" || getMediaType(imageUrl) === "vimeo" ? (
+            <div className="w-full h-full bg-[#1a1a2e] flex items-center justify-center">
+              <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center shadow">
+                <Play className="w-5 h-5 text-[#323338] ml-0.5" fill="currentColor" />
+              </div>
+            </div>
+          ) : (
           <ImageWithFallback
             src={imageUrl}
             alt={title}
             className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500 ease-out"
           />
-          <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          )}
+          <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
         </div>
       ) : (
         <div className="aspect-[4/3] w-full bg-[#f5f6f8] flex flex-col items-center justify-center relative overflow-hidden group-hover:bg-[#e6e9ef] transition-colors duration-500">

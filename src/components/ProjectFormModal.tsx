@@ -19,6 +19,7 @@ const EMPTY_FORM: ProjectFormValues = {
   tags: [],
   details: [],
   images: [],
+  modalType: "default",
 };
 
 function projectToForm(p: ProjectData): ProjectFormValues {
@@ -31,6 +32,7 @@ function projectToForm(p: ProjectData): ProjectFormValues {
     tags: p.tags ?? [],
     details: p.details ?? [],
     images: p.images ?? [],
+    modalType: p.modalType ?? "default",
   };
 }
 
@@ -204,24 +206,49 @@ export function ProjectFormModal({ isOpen, project, onClose, onSave }: ProjectFo
             </div>
           </section>
 
-          {/* 이미지 */}
+          {/* 모달 포맷 */}
+          <section className="space-y-3">
+            <h3 className="text-[13px] font-semibold text-[#a1a1b5] uppercase tracking-wider">모달 포맷</h3>
+            <div className="grid grid-cols-2 gap-3">
+              {([
+                { value: "default", label: "기본", desc: "좌측 이미지 + 우측 텍스트" },
+                { value: "image_focus", label: "이미지 집중", desc: "상단 정보 + 풀 이미지" },
+              ] as const).map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => setForm((prev) => ({ ...prev, modalType: opt.value }))}
+                  className={`text-left p-4 rounded-xl border-2 transition-all ${
+                    form.modalType === opt.value
+                      ? "border-[#0073ea] bg-[#f0f7ff]"
+                      : "border-[#d0d4e4] hover:border-[#a1a1b5]"
+                  }`}
+                >
+                  <p className={`text-[14px] font-semibold ${form.modalType === opt.value ? "text-[#0073ea]" : "text-[#323338]"}`}>{opt.label}</p>
+                  <p className="text-[12px] text-[#676879] mt-0.5">{opt.desc}</p>
+                </button>
+              ))}
+            </div>
+          </section>
+
+          {/* 미디어 (이미지 / 동영상) */}
           <section className="space-y-4">
-            <h3 className="text-[13px] font-semibold text-[#a1a1b5] uppercase tracking-wider">이미지</h3>
+            <h3 className="text-[13px] font-semibold text-[#a1a1b5] uppercase tracking-wider">미디어</h3>
+            <p className="text-[12px] text-[#a1a1b5] -mt-2">이미지 URL 또는 YouTube·Vimeo·mp4 링크를 입력하세요.</p>
 
             <div>
-              <label className="block text-[13px] font-medium text-[#323338] mb-1.5">대표 이미지 URL</label>
+              <label className="block text-[13px] font-medium text-[#323338] mb-1.5">대표 미디어 URL</label>
               <input
                 type="text"
                 value={form.imageUrl}
                 onChange={(e) => handleField("imageUrl", e.target.value)}
-                placeholder="https://..."
+                placeholder="https://... (이미지 또는 유튜브 링크)"
                 className="w-full px-4 py-2.5 rounded-xl border border-[#d0d4e4] text-[14px] text-[#323338] placeholder-[#a1a1b5] focus:outline-none focus:border-[#0073ea] focus:ring-2 focus:ring-[#0073ea]/10 transition-all"
               />
             </div>
 
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="text-[13px] font-medium text-[#323338]">추가 이미지 (캐러셀)</label>
+                <label className="text-[13px] font-medium text-[#323338]">추가 미디어 (캐러셀)</label>
                 <button
                   onClick={addImage}
                   className="flex items-center gap-1 text-[13px] font-medium text-[#0073ea] hover:text-[#0060c0] transition-colors"
@@ -235,7 +262,7 @@ export function ProjectFormModal({ isOpen, project, onClose, onSave }: ProjectFo
                     type="text"
                     value={url}
                     onChange={(e) => updateImage(i, e.target.value)}
-                    placeholder={`이미지 ${i + 1} URL`}
+                    placeholder={`미디어 ${i + 1} URL`}
                     className="flex-1 px-4 py-2.5 rounded-xl border border-[#d0d4e4] text-[14px] text-[#323338] placeholder-[#a1a1b5] focus:outline-none focus:border-[#0073ea] focus:ring-2 focus:ring-[#0073ea]/10 transition-all"
                   />
                   <button

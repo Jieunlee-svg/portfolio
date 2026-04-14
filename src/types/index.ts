@@ -3,6 +3,8 @@ export interface ProjectDetail {
   content: string;
 }
 
+export type ModalType = "default" | "image_focus";
+
 export interface ProjectData {
   id?: string;
   title: string;
@@ -13,4 +15,5 @@ export interface ProjectData {
   period: string;
   institution?: string;
   details?: ProjectDetail[];
+  modalType?: ModalType;
 }

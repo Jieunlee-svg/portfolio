@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import type { ProjectData } from "@/types";
+import type { ProjectData, ModalType } from "@/types";
 
 export interface ProjectFormValues {
   title: string;
@@ -10,6 +10,7 @@ export interface ProjectFormValues {
   tags: string[];
   details: { subtitle: string; content: string }[];
   images: string[];
+  modalType: ModalType;
 }
 
 export async function fetchProjects(): Promise<ProjectData[]> {
@@ -23,6 +24,7 @@ export async function fetchProjects(): Promise<ProjectData[]> {
       tags,
       period,
       institution,
+      modal_type,
       project_images ( url, order ),
       project_details ( subtitle, content, order )
     `)
@@ -37,14 +39,15 @@ export async function fetchProjects(): Promise<ProjectData[]> {
     description: p.description,
     imageUrl: p.image_url ?? undefined,
     images: p.project_images
-      .sort((a, b) => a.order - b.order)
-      .map((img) => img.url),
+      .sort((a: { order: number }, b: { order: number }) => a.order - b.order)
+      .map((img: { url: string }) => img.url),
     tags: p.tags,
     period: p.period,
     institution: p.institution ?? undefined,
+    modalType: (p.modal_type ?? "default") as ModalType,
     details: p.project_details
-      .sort((a, b) => a.order - b.order)
-      .map((d) => ({ subtitle: d.subtitle, content: d.content })),
+      .sort((a: { order: number }, b: { order: number }) => a.order - b.order)
+      .map((d: { subtitle: string; content: string }) => ({ subtitle: d.subtitle, content: d.content })),
   }));
 }
 
@@ -58,6 +61,7 @@ export async function createProject(form: ProjectFormValues): Promise<void> {
       institution: form.institution || null,
       image_url: form.imageUrl || null,
       tags: form.tags,
+      modal_type: form.modalType,
     })
     .select("id")
     .single();
@@ -100,12 +104,12 @@ export async function updateProject(id: string, form: ProjectFormValues): Promis
       institution: form.institution || null,
       image_url: form.imageUrl || null,
       tags: form.tags,
+      modal_type: form.modalType,
     })
     .eq("id", id);
 
   if (error) throw error;
 
-  // 기존 details/images 삭제 후 재삽입
   await supabase.from("project_details").delete().eq("project_id", id);
   await supabase.from("project_images").delete().eq("project_id", id);
 

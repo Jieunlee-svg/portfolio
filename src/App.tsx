@@ -187,24 +187,6 @@ export default function App() {
           onEdit={() => { setProfileEditTab("about"); setProfileEditOpen(true); }}
         />
 
-        {/* 경력 */}
-        <ExperienceSection
-          experiences={experiences}
-          isAdmin={isAdmin}
-          onAdd={() => { setEditingExp(null); setExpModalOpen(true); }}
-          onEdit={(exp) => { setEditingExp(exp); setExpModalOpen(true); }}
-          onDelete={(exp) => setDeleteExpConfirm(exp)}
-        />
-
-        {/* 학력 */}
-        <EducationSection
-          education={education}
-          isAdmin={isAdmin}
-          onAdd={() => { setEditingEdu(null); setEduModalOpen(true); }}
-          onEdit={(edu) => { setEditingEdu(edu); setEduModalOpen(true); }}
-          onDelete={(edu) => setDeleteEduConfirm(edu)}
-        />
-
         {/* 활동 */}
         <div className="bg-white rounded-[24px] border border-gray-100 shadow-[0_4px_12px_rgba(0,0,0,0.03)] px-8 py-6">
           <div className="flex flex-row items-center justify-between gap-4 mb-6">
@@ -322,6 +304,24 @@ export default function App() {
             </div>
           )}
         </div>
+
+        {/* 경력 */}
+        <ExperienceSection
+          experiences={experiences}
+          isAdmin={isAdmin}
+          onAdd={() => { setEditingExp(null); setExpModalOpen(true); }}
+          onEdit={(exp) => { setEditingExp(exp); setExpModalOpen(true); }}
+          onDelete={(exp) => setDeleteExpConfirm(exp)}
+        />
+
+        {/* 학력 */}
+        <EducationSection
+          education={education}
+          isAdmin={isAdmin}
+          onAdd={() => { setEditingEdu(null); setEduModalOpen(true); }}
+          onEdit={(edu) => { setEditingEdu(edu); setEduModalOpen(true); }}
+          onDelete={(edu) => setDeleteEduConfirm(edu)}
+        />
       </div>
 
       <Footer isAdmin={isAdmin} onLogin={() => setIsAdmin(true)} onLogout={() => setIsAdmin(false)} />
