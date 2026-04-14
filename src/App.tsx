@@ -1,11 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ChevronDown, Plus } from "lucide-react";
 import { ProfileHeader } from "@/components/ProfileHeader";
 import { NotionCard } from "@/components/NotionCard";
 import { ProjectDetailModal } from "@/components/ProjectDetailModal";
+import { ProjectFormModal } from "@/components/ProjectFormModal";
+import { ProfileEditModal } from "@/components/ProfileEditModal";
 import { Footer } from "@/components/Footer";
-import { fetchProjects } from "@/data/projects";
-import { fetchProfile } from "@/data/profile";
+import { fetchProjects, createProject, updateProject, deleteProject } from "@/data/projects";
+import type { ProjectFormValues } from "@/data/projects";
+import { fetchProfile, updateProfile } from "@/data/profile";
+import type { ProfileUpdateData } from "@/data/profile";
 import { useProjects } from "@/hooks/useProjects";
 import type { ProjectData } from "@/types";
 import type { ProfileData } from "@/data/profile";
@@ -23,17 +27,66 @@ export default function App() {
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  // 프로필 편집 모달 상태
+  const [profileEditOpen, setProfileEditOpen] = useState(false);
+  const [profileEditTab, setProfileEditTab] = useState<"info" | "image">("info");
+
+  const loadProfile = useCallback(() => {
+    fetchProfile()
+      .then(setProfile)
+      .catch(() => {});
+  }, []);
+
+  const handleProfileSave = async (data: ProfileUpdateData) => {
+    if (!profile?.id) return;
+    await updateProfile(profile.id, data);
+    loadProfile();
+  };
+
+  // CRUD 모달 상태
+  const [formModalOpen, setFormModalOpen] = useState(false);
+  const [editingProject, setEditingProject] = useState<ProjectData | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<ProjectData | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+
+  const loadProjects = useCallback(() => {
+    setLoadingProjects(true);
     fetchProjects()
       .then(setProjects)
       .catch(() => setError("프로젝트를 불러오지 못했습니다."))
       .finally(() => setLoadingProjects(false));
+  }, []);
+
+  useEffect(() => {
+    loadProjects();
 
     fetchProfile()
       .then(setProfile)
       .catch(() => {})
       .finally(() => setLoadingProfile(false));
-  }, []);
+    // loadProfile은 편집 후 갱신 시 사용
+  }, [loadProjects]);
+
+  const handleSave = async (data: ProjectFormValues) => {
+    if (editingProject?.id) {
+      await updateProject(editingProject.id, data);
+    } else {
+      await createProject(data);
+    }
+    loadProjects();
+  };
+
+  const handleDelete = async (project: ProjectData) => {
+    if (!project.id) return;
+    setDeleteLoading(true);
+    try {
+      await deleteProject(project.id);
+      setDeleteConfirm(null);
+      loadProjects();
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
 
   const {
     allTags,
@@ -51,7 +104,14 @@ export default function App() {
     <div className="min-h-screen bg-[#f5f6f8] font-sans selection:bg-[#0073ea] selection:text-white">
       <div className="max-w-6xl mx-auto p-4 md:p-6 lg:p-8">
         <div className="mb-10 mt-4">
-          <ProfileHeader isAdmin={isAdmin} profile={profile} loading={loadingProfile} />
+          <ProfileHeader
+            isAdmin={isAdmin}
+            profile={profile}
+            loading={loadingProfile}
+            onEditCover={() => { setProfileEditTab("image"); setProfileEditOpen(true); }}
+            onEditProfileImage={() => { setProfileEditTab("image"); setProfileEditOpen(true); }}
+            onEditProfile={() => { setProfileEditTab("info"); setProfileEditOpen(true); }}
+          />
         </div>
 
         {/* Section Header */}
@@ -62,6 +122,7 @@ export default function App() {
                 프로젝트 및 작업물
                 {isAdmin && (
                   <button
+                    onClick={() => { setEditingProject(null); setFormModalOpen(true); }}
                     className="flex items-center justify-center w-[36px] h-[36px] rounded-full bg-white text-[#323338] shadow-[0_2px_8px_rgba(0,0,0,0.08)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.12)] hover:-translate-y-0.5 hover:text-[#0073ea] transition-all duration-200"
                     title="추가"
                     aria-label="추가"
@@ -155,7 +216,10 @@ export default function App() {
                 imageUrl={project.imageUrl}
                 tags={project.tags}
                 period={project.period}
+                isAdmin={isAdmin}
                 onClick={() => setSelectedProject(project)}
+                onEdit={() => { setEditingProject(project); setFormModalOpen(true); }}
+                onDelete={() => setDeleteConfirm(project)}
               />
             ))}
           </div>
@@ -195,6 +259,49 @@ export default function App() {
         isOpen={!!selectedProject}
         onClose={() => setSelectedProject(null)}
       />
+
+      <ProfileEditModal
+        isOpen={profileEditOpen}
+        profile={profile}
+        initialTab={profileEditTab}
+        onClose={() => setProfileEditOpen(false)}
+        onSave={handleProfileSave}
+      />
+
+      <ProjectFormModal
+        isOpen={formModalOpen}
+        project={editingProject}
+        onClose={() => { setFormModalOpen(false); setEditingProject(null); }}
+        onSave={handleSave}
+      />
+
+      {/* 삭제 확인 모달 */}
+      {deleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#323338]/40 backdrop-blur-sm">
+          <div className="absolute inset-0" onClick={() => setDeleteConfirm(null)} />
+          <div className="relative w-full max-w-sm bg-white rounded-[20px] shadow-[0_16px_40px_rgba(0,0,0,0.12)] p-8">
+            <h3 className="text-[18px] font-semibold text-[#323338] mb-2">프로젝트 삭제</h3>
+            <p className="text-[14px] text-[#676879] mb-6 leading-relaxed">
+              <span className="font-semibold text-[#323338]">"{deleteConfirm.title}"</span>을(를) 삭제하면<br />복구할 수 없습니다. 계속하시겠어요?
+            </p>
+            <div className="flex gap-2 justify-end">
+              <button
+                onClick={() => setDeleteConfirm(null)}
+                className="px-5 py-2.5 rounded-xl text-[14px] font-medium text-[#676879] bg-[#f5f6f8] hover:bg-[#e6e9ef] transition-colors"
+              >
+                취소
+              </button>
+              <button
+                onClick={() => handleDelete(deleteConfirm)}
+                disabled={deleteLoading}
+                className="px-5 py-2.5 rounded-xl text-[14px] font-semibold text-white bg-red-500 hover:bg-red-600 disabled:opacity-60 transition-colors"
+              >
+                {deleteLoading ? "삭제 중..." : "삭제"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

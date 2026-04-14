@@ -1,4 +1,4 @@
-import { CalendarRange, ArrowUpRight, Image as ImageIcon } from "lucide-react";
+import { CalendarRange, ArrowUpRight, Image as ImageIcon, Pencil, Trash2 } from "lucide-react";
 import { ImageWithFallback } from "@/components/ImageWithFallback";
 import { getTagColor } from "@/constants/colors";
 
@@ -8,15 +8,36 @@ interface NotionCardProps {
   imageUrl?: string;
   tags?: string[];
   period?: string;
+  isAdmin?: boolean;
   onClick?: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
-export function NotionCard({ title, description, imageUrl, tags, period, onClick }: NotionCardProps) {
+export function NotionCard({ title, description, imageUrl, tags, period, isAdmin, onClick, onEdit, onDelete }: NotionCardProps) {
   return (
     <div
       onClick={onClick}
       className="group flex flex-col bg-white rounded-[24px] border border-gray-100 hover:border-transparent hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1.5 transition-all duration-300 overflow-hidden cursor-pointer h-full relative"
     >
+      {isAdmin && (
+        <div className="absolute top-3 right-3 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+          <button
+            onClick={(e) => { e.stopPropagation(); onEdit?.(); }}
+            className="w-8 h-8 flex items-center justify-center bg-white/90 backdrop-blur-sm rounded-full shadow-sm text-[#676879] hover:text-[#0073ea] hover:bg-white transition-colors"
+            title="수정"
+          >
+            <Pencil className="w-3.5 h-3.5" />
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); onDelete?.(); }}
+            className="w-8 h-8 flex items-center justify-center bg-white/90 backdrop-blur-sm rounded-full shadow-sm text-[#676879] hover:text-red-500 hover:bg-white transition-colors"
+            title="삭제"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
       {/* Image */}
       {imageUrl ? (
         <div className="aspect-[4/3] w-full overflow-hidden bg-gray-50 relative">

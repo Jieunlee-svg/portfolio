@@ -7,9 +7,12 @@ interface ProfileHeaderProps {
   isAdmin?: boolean;
   profile: ProfileData | null;
   loading?: boolean;
+  onEditCover?: () => void;
+  onEditProfileImage?: () => void;
+  onEditProfile?: () => void;
 }
 
-export function ProfileHeader({ isAdmin = false, profile, loading = false }: ProfileHeaderProps) {
+export function ProfileHeader({ isAdmin = false, profile, loading = false, onEditCover, onEditProfileImage, onEditProfile }: ProfileHeaderProps) {
   if (loading) {
     return (
       <div className="w-full bg-white rounded-[24px] overflow-hidden border border-gray-100 pb-6 shadow-[0_4px_12px_rgba(0,0,0,0.03)] animate-pulse">
@@ -35,7 +38,7 @@ export function ProfileHeader({ isAdmin = false, profile, loading = false }: Pro
           />
         )}
         {isAdmin && (
-          <button className="absolute top-4 right-4 p-2.5 bg-white/90 backdrop-blur-md rounded-full shadow-sm hover:bg-white transition-all hover:scale-105">
+          <button onClick={onEditCover} className="absolute top-4 right-4 p-2.5 bg-white/90 backdrop-blur-md rounded-full shadow-sm hover:bg-white transition-all hover:scale-105">
             <Camera className="w-5 h-5 text-[#323338]" />
           </button>
         )}
@@ -55,13 +58,13 @@ export function ProfileHeader({ isAdmin = false, profile, loading = false }: Pro
               )}
             </div>
             {isAdmin && (
-              <button className="absolute bottom-2 right-2 p-2 bg-white rounded-full border border-gray-200 hover:bg-[#f5f6f8] transition-all shadow-sm z-10 hover:scale-105 text-[#323338]">
+              <button onClick={onEditProfileImage} className="absolute bottom-2 right-2 p-2 bg-white rounded-full border border-gray-200 hover:bg-[#f5f6f8] transition-all shadow-sm z-10 hover:scale-105 text-[#323338]">
                 <Camera className="w-5 h-5" />
               </button>
             )}
           </div>
           {isAdmin && (
-            <button className="mt-4 p-2.5 rounded-full bg-[#f5f6f8] hover:bg-[#e6e9ef] transition-colors text-[#676879] hover:text-[#323338]">
+            <button onClick={onEditProfile} className="mt-4 p-2.5 rounded-full bg-[#f5f6f8] hover:bg-[#e6e9ef] transition-colors text-[#676879] hover:text-[#323338]">
               <Pencil className="w-5 h-5" />
             </button>
           )}
